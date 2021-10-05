@@ -18,6 +18,7 @@ Suite Teardown    Close Browser
 
 Order robots from RobotSpareBin Industries Inc
     Open order page
+    Close modal
 
 
 *** Keywords ***
@@ -27,3 +28,8 @@ Open order page
     New Page    ${secret}[order_page_url]
     Wait For Elements State    ${order_page_submit_btn}    visible
     Wait For Elements State    ${modal_content}            visible
+
+
+Close modal
+    Click    ${cookies_accept_btn}
+    Wait For Elements State    ${modal_content}    hidden
