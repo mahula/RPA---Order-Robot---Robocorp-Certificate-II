@@ -22,7 +22,7 @@ Order robots from RobotSpareBin Industries Inc
     ${orders} =    Get orders
     FOR    ${order}    IN    @{orders}
         Fill order form    ${order}
-        Sleep    5
+        Wait Until Keyword Succeeds    3x    0.5 sec    Submit order
     END
 
 
@@ -51,3 +51,8 @@ Get orders
 Fill order form
     [Arguments]    ${order_table_row}
     OrderPage.Fill in order parameters    ${order_table_row}
+
+
+Submit order
+    Click    ${order_page_submit_btn}
+    Wait For Elements State    ${order_page_receipt_alert}    visible

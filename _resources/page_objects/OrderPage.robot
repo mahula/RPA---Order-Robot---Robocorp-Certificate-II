@@ -12,6 +12,8 @@ ${order_page_legs_part_number_field}    //input[@placeholder='Enter the part num
 ${order_page_address_field}             id=address
 ${order_page_submit_btn}                id=order
 
+${order_page_receipt_alert}             id=receipt
+
 
 *** Keywords ***
 
