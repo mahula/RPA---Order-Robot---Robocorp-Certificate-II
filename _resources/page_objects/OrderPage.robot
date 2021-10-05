@@ -10,8 +10,10 @@ ${order_page_head_select}               id=head    # select strategy: by option
 ${order_page_body_checkbox_prefix}      id=id-body-
 ${order_page_legs_part_number_field}    //input[@placeholder='Enter the part number for the legs']
 ${order_page_address_field}             id=address
+${order_page_preview_btn}               id=preview
 ${order_page_submit_btn}                id=order
 
+${order_page_robot_preview_image}       id=robot-preview-image
 ${order_page_receipt_alert}             id=receipt
 
 
