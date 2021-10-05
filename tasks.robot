@@ -20,6 +20,10 @@ Order robots from RobotSpareBin Industries Inc
     Open order page
     Close modal
     ${orders} =    Get orders
+    FOR    ${order}    IN    @{orders}
+        Fill order form    ${order}
+        Sleep    5
+    END
 
 
 *** Keywords ***
@@ -41,5 +45,9 @@ Get orders
     ${secret} =    Get Secret    urls
     RPA.HTTP.Download    ${secret}[order_csv_file_url]    overwrite=true
     ${orders} =    Read table from CSV    orders.csv
-    Log To Console    ${orders}
     [Return]    ${orders}
+
+
+Fill order form
+    [Arguments]    ${order_table_row}
+    OrderPage.Fill in order parameters    ${order_table_row}
