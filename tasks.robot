@@ -19,6 +19,7 @@ Suite Teardown    Close Browser
 Order robots from RobotSpareBin Industries Inc
     Open order page
     Close modal
+    ${orders} =    Get orders
 
 
 *** Keywords ***
@@ -33,3 +34,12 @@ Open order page
 Close modal
     Click    ${cookies_accept_btn}
     Wait For Elements State    ${modal_content}    hidden
+
+
+Get orders
+    [Documentation]    Download the order CSV file, read it into table
+    ${secret} =    Get Secret    urls
+    RPA.HTTP.Download    ${secret}[order_csv_file_url]    overwrite=true
+    ${orders} =    Read table from CSV    orders.csv
+    Log To Console    ${orders}
+    [Return]    ${orders}
