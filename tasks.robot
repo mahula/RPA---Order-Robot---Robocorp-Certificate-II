@@ -10,20 +10,23 @@ Resource          ./_resources/settings.robot
 Resource          ./_resources/page_objects/OrderPage.robot
 Resource          ./_resources/page_objects/CookiesDialog.robot
 
-Suite Setup       New Browser    chromium    headless=false    # true
-Suite Teardown    Close Browser
+Suite Setup       New Browser    chromium    headless=true
+Suite Teardown    RPA.Browser.Playwright.Close Browser
 
 
 *** Tasks ***
 
 Order robots from RobotSpareBin Industries Inc
     Open order page
-    Close modal
     ${orders} =    Get orders
     FOR    ${order}    IN    @{orders}
+        Close modal
         Fill order form    ${order}
         Preview robot
-        Wait Until Keyword Succeeds    3x    0.5 sec    Submit order
+        ${screenshot} =    Take screenshot of the robot image    ${order}[Order number]
+        Wait Until Keyword Succeeds    5x    0.5 sec    Submit order
+        Create receipt PDF with robot preview image    ${order}[Order number]    ${screenshot}
+        Order new robot
     END
 
 
@@ -59,6 +62,41 @@ Preview robot
     Wait For Elements State    ${order_page_robot_preview_image}    visible
 
 
+Take screenshot of the robot image
+    [Arguments]    ${order_number}
+    Set Local Variable    ${file_path}    ${screenshot_dir}robot_preview_image_${order_number}.png
+    Take Screenshot    filename=${file_path}    selector=${order_page_robot_preview_image}    fullPage=False    timeout=2
+    [Return]    ${file_path}
+
+
 Submit order
     Click    ${order_page_submit_btn}
-    Wait For Elements State    ${order_page_receipt_alert}    visible
+    Wait For Elements State    ${order_page_receipt_alert}        visible
+    Wait For Elements State    ${order_page_order_another_btn}    visible
+
+
+Store order receipt as PDF file
+    [Arguments]    ${order_number}
+    ${receipt_html} =    Get Property             ${order_page_receipt_alert}    outerHTML
+    Set Local Variable    ${file_path}    ${screenshot_dir}receipt_${order_number}.pdf
+    Html To Pdf    ${receipt_html}    ${file_path}
+    [Return]    ${file_path}
+
+
+Embed robot preview screenshot to receipt PDF file
+    [Arguments]    ${screenshot}    ${pdf}
+    Open Pdf    ${pdf}
+    ${image_files} =    Create List    ${screenshot}:align=center
+    Add Files To PDF    ${image_files}    ${pdf}    append=True
+    Close Pdf    ${pdf}
+
+
+Create receipt PDF with robot preview image
+    [Arguments]    ${order_number}    ${screenshot}
+    ${pdf} =    Store order receipt as PDF file    ${order_number}
+    Embed robot preview screenshot to receipt PDF file    ${screenshot}    ${pdf}
+
+
+Order new robot
+    Click    ${order_page_order_another_btn}
+    Wait For Elements State    ${order_page_submit_btn}    visible

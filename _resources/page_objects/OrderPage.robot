@@ -15,6 +15,7 @@ ${order_page_submit_btn}                id=order
 
 ${order_page_robot_preview_image}       id=robot-preview-image
 ${order_page_receipt_alert}             id=receipt
+${order_page_order_another_btn}         id=order-another
 
 
 *** Keywords ***
