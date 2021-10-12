@@ -14,6 +14,13 @@ Suite Setup       New Browser    chromium    headless=true
 Suite Teardown    RPA.Browser.Playwright.Close Browser
 
 
+*** Variables ***
+
+${out_dir}           ${CURDIR}${/}output
+${screenshot_dir}    ${out_dir}${/}screenshots
+${receipt_dir}       ${out_dir}${/}receipts
+
+
 *** Tasks ***
 
 Order robots from RobotSpareBin Industries Inc
@@ -28,6 +35,7 @@ Order robots from RobotSpareBin Industries Inc
         Create receipt PDF with robot preview image    ${order}[Order number]    ${screenshot}
         Order new robot
     END
+    Create ZIP file of all receipts
 
 
 *** Keywords ***
@@ -64,7 +72,7 @@ Preview robot
 
 Take screenshot of the robot image
     [Arguments]    ${order_number}
-    Set Local Variable    ${file_path}    ${screenshot_dir}robot_preview_image_${order_number}.png
+    Set Local Variable    ${file_path}    ${screenshot_dir}${/}robot_preview_image_${order_number}.png
     Take Screenshot    filename=${file_path}    selector=${order_page_robot_preview_image}    fullPage=False    timeout=2
     [Return]    ${file_path}
 
@@ -77,8 +85,8 @@ Submit order
 
 Store order receipt as PDF file
     [Arguments]    ${order_number}
-    ${receipt_html} =    Get Property             ${order_page_receipt_alert}    outerHTML
-    Set Local Variable    ${file_path}    ${screenshot_dir}receipt_${order_number}.pdf
+    ${receipt_html} =    Get Property    ${order_page_receipt_alert}    outerHTML
+    Set Local Variable    ${file_path}    ${receipt_dir}${/}receipt_${order_number}.pdf
     Html To Pdf    ${receipt_html}    ${file_path}
     [Return]    ${file_path}
 
@@ -100,3 +108,8 @@ Create receipt PDF with robot preview image
 Order new robot
     Click    ${order_page_order_another_btn}
     Wait For Elements State    ${order_page_submit_btn}    visible
+
+
+Create ZIP file of all receipts
+    ${zip_file_name} =    Set Variable    ${out_dir}${/}all_receipts.zip
+    Archive Folder With Zip    ${receipt_dir}    ${zip_file_name}
