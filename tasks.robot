@@ -11,8 +11,9 @@ Resource          ./_resources/page_objects/OrderPage.robot
 Resource          ./_resources/page_objects/CookiesDialog.robot
 
 Suite Setup       New Browser    chromium    headless=true
-Suite Teardown    RPA.Browser.Playwright.Close Browser
+Suite Teardown    Cleaup
 
+Library    OperatingSystem
 
 *** Variables ***
 
@@ -113,3 +114,9 @@ Order new robot
 Create ZIP file of all receipts
     ${zip_file_name} =    Set Variable    ${out_dir}${/}all_receipts.zip
     Archive Folder With Zip    ${receipt_dir}    ${zip_file_name}
+
+
+Cleaup
+    RPA.Browser.Playwright.Close Browser
+    Remove Directory    ${screenshot_dir}    recursive=True
+    Remove Directory    ${receipt_dir}       recursive=True
