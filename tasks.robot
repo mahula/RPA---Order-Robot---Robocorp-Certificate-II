@@ -13,7 +13,6 @@ Resource          ./_resources/page_objects/CookiesDialog.robot
 Suite Setup       New Browser    chromium    headless=true
 Suite Teardown    Cleaup
 
-Library    OperatingSystem
 
 *** Variables ***
 
@@ -26,7 +25,8 @@ ${receipt_dir}       ${out_dir}${/}receipts
 
 Order robots from RobotSpareBin Industries Inc
     Open order page
-    ${orders} =    Get orders
+    ${order_file_url} =    Request order file URL from user
+    ${orders} =    Get orders    ${order_file_url}
     FOR    ${order}    IN    @{orders}
         Close modal
         Fill order form    ${order}
@@ -48,6 +48,14 @@ Open order page
     Wait For Elements State    ${modal_content}            visible
 
 
+Request order file URL from user
+    Add heading    Order file URL
+    Add text    Please provide the complete URL to the CSV file, which contains all the orders.
+    Add text input    url    label=URL for order file
+    ${input} =    Run dialog
+    [Return]    ${input.url}
+
+
 Close modal
     Click    ${cookies_accept_btn}
     Wait For Elements State    ${modal_content}    hidden
@@ -55,8 +63,8 @@ Close modal
 
 Get orders
     [Documentation]    Download the order CSV file, read it into table
-    ${secret} =    Get Secret    urls
-    RPA.HTTP.Download    ${secret}[order_csv_file_url]    overwrite=true
+    [Arguments]        ${order_file_url}
+    RPA.HTTP.Download    ${order_file_url}    overwrite=true
     ${orders} =    Read table from CSV    orders.csv
     [Return]    ${orders}
 
