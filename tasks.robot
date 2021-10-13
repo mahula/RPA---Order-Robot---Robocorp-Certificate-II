@@ -5,6 +5,7 @@ Documentation     Orders robots from RobotSpareBin Industries Inc.\n\n
 ...               Saves the screenshot of the ordered robot.\n\n
 ...               Embeds the screenshot of the robot to the PDF receipt.\n\n
 ...               Creates ZIP archive of the receipts and the images.\n\n
+...               Removes all receipts and screenshot from output directory
 
 Resource          ./_resources/settings.robot
 Resource          ./_resources/page_objects/OrderPage.robot
@@ -49,11 +50,12 @@ Open order page
 
 
 Request order file URL from user
-    Add heading    Order file URL
-    Add text    Please provide the complete URL to the CSV file, which contains all the orders.
-    Add text input    url    label=URL for order file
-    ${input} =    Run dialog
-    [Return]    ${input.url}
+    [Documentation]    Request the order file URL from the user using an input dialog
+    Add heading        Order file URL
+    Add text           Please provide the complete URL to the CSV file, which contains all the orders.
+    Add text input     url    label=URL for order file
+    ${input} =         Run dialog
+    [Return]           ${input.url}
 
 
 Close modal
